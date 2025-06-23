@@ -1,0 +1,63 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model EventEase.Models.Event
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h4>Event Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+                {
+                    <div class="col-md-4 mb-3">
+                        <img src="@Model.ImageUrl" alt="Event Image" class="img-fluid rounded" />
+                    </div>
+                }
+                <div class="@(!string.IsNullOrEmpty(Model.ImageUrl) ? "col-md-8" : "col-12")">
+                    <dl class="row">
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EventName)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.EventName)</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EventDate)</dt>
+                        <dd class="col-sm-9">@Model.EventDate.ToString("dddd, MMMM dd, yyyy h:mm tt")</dd>
+
+                        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Description)</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt class="col-sm-3">Venue</dt>
+                        <dd class="col-sm-9">@Model.Venue?.VenueName ?? "N/A"</dd>
+
+                        <dt class="col-sm-3">Event Type</dt>
+                        <dd class="col-sm-9">@Model.EventType?.Name ?? "N/A"</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.EventId" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.EventId" class="btn btn-danger ms-2">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

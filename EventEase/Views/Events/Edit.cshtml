@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model EventEase.Models.Event
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h1>Edit Event</h1>
+
+<form asp-action="Edit" enctype="multipart/form-data">
+    <input type="hidden" asp-for="EventId" />
+
+    <div class="form-group">
+        <label asp-for="EventName" class="control-label"></label>
+        <input asp-for="EventName" class="form-control" />
+        <span asp-validation-for="EventName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EventDate" class="control-label"></label>
+        <input asp-for="EventDate" class="form-control" type="datetime-local" />
+        <span asp-validation-for="EventDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="VenueId" class="control-label"></label>
+        <select asp-for="VenueId" class="form-control" asp-items="ViewBag.VenueId"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Current Image</label>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="Current Image" class="img-thumbnail" style="max-height: 200px; display: block;" />
+        }
+        else
+        {
+            <p>No image uploaded</p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageFile" class="control-label">New Image (leave blank to keep current)</label>
+        <input asp-for="ImageFile" class="form-control" type="file" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

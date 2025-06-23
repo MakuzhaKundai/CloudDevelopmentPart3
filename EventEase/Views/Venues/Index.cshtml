@@ -1,0 +1,202 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<EventEase.Models.Venue>
+@{
+    ViewData["Title"] = "Venues Management";
+}
+
+<div class="container mt-4">
+    <!-- Header with Create Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-building me-2"></i>@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Add New Venue
+        </a>
+    </div>
+
+    <!-- Status Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Venues Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">All Venues</h5>
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search venues...">
+                    <button class="btn btn-outline-light" type="button" id="searchButton">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0" id="venuesTable">
+                    <thead>
+                        <tr>
+                            <th width="120px">Image</th>
+                            <th>@Html.DisplayNameFor(model => model.VenueName)</th>
+                            <th>@Html.DisplayNameFor(model => model.Location)</th>
+                            <th>@Html.DisplayNameFor(model => model.Capacity)</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl"
+                                             class="img-thumbnail venue-image"
+                                             alt="@item.VenueName"
+                                             onerror="this.onerror=null;this.src='/images/venue-placeholder.png';"
+                                             style="width:100px;height:70px;object-fit:cover;">
+                                    }
+                                    else
+                                    {
+                                        <div class="no-image-placeholder">
+                                            <i class="bi bi-image text-muted" style="font-size: 2rem;"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.VenueName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Location)</td>
+                                <td>@item.Capacity.ToString("N0")</td>
+                                <td class="text-end">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@item.VenueId"
+                                           class="btn btn-sm btn-outline-primary"
+                                           data-bs-toggle="tooltip"
+                                           title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.VenueId"
+                                           class="btn btn-sm btn-outline-secondary"
+                                           data-bs-toggle="tooltip"
+                                           title="Edit Venue">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.VenueId"
+                                           class="btn btn-sm btn-outline-danger"
+                                           data-bs-toggle="tooltip"
+                                           title="Delete Venue">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    Showing @Model.Count() venues
+                </div>
+                <div>
+                    <a href="#top" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-up"></i> Back to top
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .venue-image {
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+            .venue-image:hover {
+                transform: scale(1.5);
+                z-index: 1000;
+                box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            }
+
+        .no-image-placeholder {
+            width: 100px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 0.25rem;
+        }
+
+        .table th {
+            white-space: nowrap;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#venuesTable').DataTable({
+                responsive: true,
+                dom: '<"top"f>rt<"bottom"lip><"clear">',
+                columnDefs: [
+                    { orderable: false, targets: [0, 4] },
+                    { searchable: false, targets: [0, 4] }
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search venues...",
+                    emptyTable: "No venues available",
+                    info: "Showing _START_ to _END_ of _TOTAL_ venues",
+                    infoEmpty: "No venues to show",
+                    infoFiltered: "(filtered from _MAX_ total venues)"
+                }
+            });
+
+            // Tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+
+            // Image click to open in new tab
+            $('.venue-image').click(function() {
+                if (this.src.includes('venue-placeholder.png')) return;
+                window.open(this.src, '_blank');
+            });
+
+            // Search functionality
+            $('#searchButton').click(function() {
+                const searchValue = $('#searchInput').val().trim();
+                if (searchValue.length > 0) {
+                    $('#venuesTable').DataTable().search(searchValue).draw();
+                }
+            });
+
+            $('#searchInput').keypress(function(e) {
+                if (e.which === 13) {
+                    $('#searchButton').click();
+                }
+            });
+        });
+    </script>
+}
